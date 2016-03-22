@@ -1,0 +1,42 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, temp, sum, result;
+vector< vector<int> > A;
+
+int main()
+{
+  while(scanf("%d", &N) != EOF)
+  {
+    A.clear();
+    A.resize(N);
+    sum = -127*100*100; result = -127*100*100;
+    if(N == 0)
+      return 0;
+
+    for(int i = 0; i < N; i++)
+      for(int j = 0; j < N; j++)
+      {
+        scanf("%d", &temp);
+        A[i].push_back(temp);
+        if(i > 0) A[i][j] += A[i-1][j];
+        if(j > 0) A[i][j] += A[i][j-1];
+        if(i > 0 && j > 0) A[i][j] -= A[i-1][j-1];
+      }
+
+    for(int i = 0; i < N; i++) for(int j = 0; j < N; j++)
+      for(int k = i; k < N; k++) for(int l = j; l < N; l++)
+      {
+        sum = A[k][l];
+        if(i > 0) sum -= A[i-1][l];
+        if(j > 0) sum -= A[k][j-1];
+        if(i > 0 && j > 0) sum += A[i-1][j-1];
+        result = max(sum, result);
+      }
+      printf("%d\n", result);
+  }
+}
