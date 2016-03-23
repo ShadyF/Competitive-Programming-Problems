@@ -1,0 +1,54 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, a, b, c;
+long long int A[22][22][22];
+long long int sum, result, temp;
+
+int main()
+{
+  scanf("%d", &N);
+  while(N--)
+  {
+    scanf("%d %d %d", &a, &b, &c);
+
+    for(int i = 0; i < a; i++)
+      for(int j = 0; j < b; j++)
+        for(int k = 0; k < c; k++)
+        {
+          scanf("%lld", &temp);
+          A[i][j][k] = temp;
+          if(i > 0) A[i][j][k] += A[i-1][j][k];
+          if(j > 0) A[i][j][k] += A[i][j-1][k];
+          if(k > 0) A[i][j][k] += A[i][j][k-1];
+          if(i > 0 && k > 0) A[i][j][k] -= A[i-1][j][k-1];
+          if(i > 0 && j > 0) A[i][j][k] -= A[i-1][j-1][k];
+          if(j > 0 && k > 0) A[i][j][k] -= A[i][j-1][k-1];
+          if(i > 0 && j > 0 && k > 0) A[i][j][k] += A[i-1][j-1][k-1];
+        }
+    sum = 0;
+    result = A[a-1][b-1][c-1];
+
+    for(int i = 0; i < a; i++) for(int j = 0; j < b; j++) for(int k = 0; k < c; k++)
+      for(int x = i; x < a; x++) for(int y = j; y < c; y++) for(int z = k; z < c; z++)
+      {
+        sum = A[x][y][z];
+        if(i > 0) sum -= A[i-1][y][z];
+        if(j > 0) sum -= A[x][j-1][z];
+        if(k > 0) sum -= A[x][y][k-1];
+        if(i > 0 && j > 0) sum += A[i-1][j-1][z];
+        if(i > 0 && k > 0) sum += A[i-1][y][k-1];
+        if(j > 0 && k > 0) sum += A[x][j-1][k-1];
+        if(i > 0 && j > 0 && k > 0) sum -= A[i-1][j-1][k-1];
+        result = max(sum, result);
+      }
+    if(N == 0)
+      printf("%lld\n", result);
+    else
+      printf("%lld\n\n", result);
+  }
+}
