@@ -1,0 +1,50 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int N, S;
+int A[160][160], sumArray[160][160];
+long long int sum, result;
+int temp;
+
+int main()
+{
+  scanf("%d", &S);
+  while(S--)
+  {
+    scanf("%d", &N);
+
+    for(int i = 0; i < N; i++)
+      for(int j = 0; j < N; j++)
+      {
+        scanf("%d", &temp);
+        sumArray[i][j] = temp;
+        sumArray[i+N][j] = temp;
+        sumArray[i][j+N] = temp;
+        sumArray[i+N][j+N] = temp;
+      }
+
+    
+    for(int i = 0; i < N*2; i++)
+      for(int j = 0; j < N*2; j++)
+      {
+        if(i > 0) sumArray[i][j] += sumArray[i-1][j];
+        if(j > 0) sumArray[i][j] += sumArray[i][j-1];
+        if(i > 0 && j > 0) sumArray[i][j] -= sumArray[i-1][j-1];
+      }
+    sum = 0;
+    result = -100*170*170;
+      for(int i = 0; i < N*2; i++) for(int j = 0; j < N*2; j++)
+        for(int x = i; x < min(N*2, i + N); x++) for(int y = j; y < min(N*2, j + N); y++)
+        {
+          sum = sumArray[x][y];
+          if(i > 0) sum -= sumArray[i-1][y];
+          if(j > 0) sum -= sumArray[x][j-1];
+          if(i > 0 && j > 0) sum += sumArray[i-1][j-1];
+          result = max(sum, result);
+        }
+      printf("%lld\n", result);
+  }
+}
