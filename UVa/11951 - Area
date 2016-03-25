@@ -1,0 +1,56 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, M, T, case_num, S;
+long long int K, sum, result, temp;
+vector< vector<long long int> > A;
+
+int main()
+{
+  scanf("%d", &T);
+  while(T--)
+  {
+    A.clear();
+    scanf("%d %d %lld", &N, &M, &K);
+    A.resize(N);
+
+    for(int i = 0; i < N; i++)
+      for(int j = 0; j < M; j++)
+      {
+        scanf("%lld", &temp);
+        A[i].push_back(temp);
+        if(i > 0) A[i][j] += A[i-1][j];
+        if(j > 0) A[i][j] += A[i][j-1];
+        if(i > 0 && j > 0) A[i][j] -= A[i-1][j-1];
+      }
+
+    sum = 0; result = 0; S = 0;
+    for(int i = 0; i < N; i++) for(int j = 0; j < M; j++)
+      for(int k = i; k < N; k++) for(int l = j; l < M; l++)
+      {
+        sum = A[k][l];
+        if(i > 0) sum -= A[i-1][l];
+        if(j > 0) sum -= A[k][j-1];
+        if(i > 0 && j > 0) sum += A[i-1][j-1];
+        if(sum > K)
+          continue;
+
+        if(S < (k-i+1)*(l-j+1))
+        {
+          result = sum;
+          S = (k-i+1)*(l-j+1);
+        }
+        else if(S == (k-i+1)*(l-j+1) && sum < result)
+        {
+          result = sum;
+          S = (k-i+1)*(l-j+1);
+        }
+      }
+    cout << "Case #" << ++case_num <<": " <<S <<" " << result << endl;
+  }
+}
