@@ -1,0 +1,46 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <stack>
+
+using namespace std;
+
+int temp, N, pos, lis, lis_end_index;
+vector<int> A, L, L_id, previous_L_id;
+stack<int> s;
+
+int main()
+{
+  while(scanf("%d", &temp) != EOF)
+    A.push_back(temp);
+
+  N = A.size();
+  L.resize(N); L_id.resize(N); previous_L_id.resize(N);
+
+  lis = 0; lis_end_index = 0;
+  for(int i = 0; i < N; i++)
+  {
+    pos = lower_bound(L.begin(), L.begin() + lis, A[i]) - L.begin();
+    L[pos] = A[i];
+    L_id[pos] = i;
+    previous_L_id[i] = pos ? L_id[pos - 1] : -1;
+    if(pos + 1 > lis)
+    {
+      lis = pos + 1;
+      lis_end_index = i;
+    }
+  }
+  printf("%d\n-\n", lis);
+  int i = lis_end_index;
+  for(; previous_L_id[i] >= 0; i = previous_L_id[i])
+    s.push(A[i]);
+  printf("%d\n", A[i]);
+  while(!s.empty())
+  {
+    printf("%d\n", s.top());
+    s.pop();
+  }
+  return 0;
+}
