@@ -1,0 +1,63 @@
+//Why reverse the array?
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <stack>
+
+using namespace std;
+
+int T, N, temp, result;
+vector<int> A, LI, LD;
+
+int LIS(int index)
+{
+  if(index == 0)
+  {
+    LI[index] = 1;
+    return 1;
+  }
+  LI[index] = 1;
+  for(int i = 0; i < index; i++)
+    if(A[i] < A[index] && LI[index] < LI[i] + 1)
+      LI[index] = LI[i] + 1;
+  return LI[index];
+}
+
+int LDS(int index)
+{
+  if(index == 0)
+  {
+    LD[index] = 1;
+    return 1;
+  }
+  LD[index] = 1;
+  for(int i = 0; i < index; i++)
+    if(A[i] > A[index] && LD[index] < LD[i] + 1)
+      LD[index] = LD[i] + 1;
+  return LD[index];
+}
+int main()
+{
+  scanf("%d", &T);
+  while(T--)
+  {
+    scanf("%d", &N);
+    A.clear();
+    LI.clear();
+    LD.clear();
+    LI.resize(N);
+    LD.resize(N);
+    for(int i = 0; i < N; i++)
+    {
+      scanf("%d", &temp);
+      A.push_back(temp);
+    }
+    reverse(A.begin(), A.end());
+    result = 0;
+    for(int i = 0; i < N; i++)
+      result = max(result, LIS(i) + LDS(i) - 1);
+    printf("%d\n", result);
+  }
+}
