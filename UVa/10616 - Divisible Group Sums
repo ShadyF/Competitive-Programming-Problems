@@ -1,0 +1,58 @@
+#include <cstdio>
+#include <vector>
+#include <cstring>
+
+using namespace std;
+
+int N, Q, D, M;
+int set_count = 1, query_count = 1;
+int memo[210][15][25];
+vector<int> A;
+
+long long mod(long long a, long long b)
+{
+    return ( ( a % b ) + b ) % b;
+}
+
+int knapsack(int index, int rem_M, long long current_sum)
+{
+    if ( rem_M == 0 )
+        return ( current_sum % D ) == 0;
+
+    if ( index >= N )
+        return 0;
+
+    if ( memo[index][rem_M][mod(current_sum + A[index], D)] != -1 )
+        return memo[index][rem_M][mod(current_sum + A[index], D)];
+
+    int ret = knapsack(index + 1, rem_M, current_sum) + knapsack(index + 1, rem_M - 1, ( current_sum + A[index] ));
+    memo[index][rem_M][mod(current_sum + A[index], D)] = ret;
+    return ret;
+}
+
+int main()
+{
+    while (scanf("%d %d", &N, &Q) && N != 0 && Q != 0)
+    {
+        A.clear();
+        query_count = 1;
+        int temp;
+        for (int i = 0; i < N; i++)
+        {
+            scanf("%d", &temp);
+            A.push_back(temp);
+        }
+
+        printf("SET %d:\n", set_count++);
+
+        for (int i = 0; i < Q; i++)
+        {
+            memset(memo, -1, sizeof(memo));
+
+            scanf("%d %d", &D, &M);
+            temp = knapsack(0, M, 0);
+            printf("QUERY %d: %d\n", query_count++, temp);
+        }
+    }
+    return 0;
+}
