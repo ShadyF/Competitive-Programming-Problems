@@ -1,0 +1,113 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+pair<int, int> direction[4]{make_pair(-1, 0), make_pair(0, 1), make_pair(1, 0),
+                            make_pair(0, -1)};       //north east south west
+int map[110][110];
+
+int N, M, S, star_count;
+char temp;
+int current_direction;
+pair<int, int> pos;
+bool stalled;
+string line;
+
+int mod(int a, int b)
+{
+    return ( ( a % b ) + b ) % b;
+}
+
+int main()
+{
+    while (cin >> N >> M >> S && N != 0 && M != 0 && S != 0)
+    {
+        memset(map, -1, sizeof(map));
+        star_count = 0;
+        stalled = false;
+        current_direction = -1;
+
+        for (int i = 0; i < N; i++)
+        {
+            cin >> line;
+            for (int j = 0; j < M; j++)
+            {
+                temp = line[j];
+                switch (temp)
+                {
+                    case '.':
+                        map[i][j] = 0;
+                        break;
+                    case '*':
+                        map[i][j] = 1;
+                        break;
+                    case '#':
+                        map[i][j] = -1;
+                        break;
+                    case 'N':
+                        map[i][j] = 0;
+                        current_direction = 0;
+                        pos.first = i;
+                        pos.second = j;
+                        break;
+                    case 'S':
+                        map[i][j] = 0;
+                        current_direction = 2;
+                        pos.first = i;
+                        pos.second = j;
+                        break;
+                    case 'L':
+                        map[i][j] = 0;
+                        current_direction = 1;
+                        pos.first = i;
+                        pos.second = j;
+                        break;
+                    case 'O':
+                        map[i][j] = 0;
+                        current_direction = 3;
+                        pos.first = i;
+                        pos.second = j;
+                        break;
+                    default:
+                        map[i][j] = -1;
+                }
+            }
+        }
+        cin >> line;
+        for (int i = 0; i < S; i++)
+        {
+            temp = line[i];
+            switch (temp)
+            {
+                case 'D':
+                    current_direction = mod(current_direction + 1, 4);
+                    break;
+                case 'E':
+                    current_direction = mod(current_direction - 1, 4);
+                    break;
+                case 'F':
+                    if ( pos.first + direction[current_direction].first < 0 ||
+                         pos.second + direction[current_direction].second < 0 )
+                        break;
+                    pos.first += direction[current_direction].first;
+                    pos.second += direction[current_direction].second;
+                    switch (map[pos.first][pos.second])
+                    {
+                        case -1:
+                            pos.first -= direction[current_direction].first;
+                            pos.second -= direction[current_direction].second;
+                            break;
+                        case 1:
+                            star_count++;
+                            map[pos.first][pos.second] = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
+        }
+        printf("%d\n", star_count);
+    }
+}
